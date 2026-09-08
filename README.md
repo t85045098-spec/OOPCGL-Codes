@@ -1,75 +1,134 @@
-# Libgraph Installation Steps on Ubuntu 22.04
+# Practical No. 6 — Pattern Drawing using DDA and Bresenham's Line Drawing Algorithms
 
-> Only guile 2.2 and 3.0 — For CG Lab
+**Group 2**
 
-## 1. Open the terminal, copy the following commands one by one and execute
+## Aim
+Pattern Drawing using DDA and Bresenham's Line Drawing Algorithms
 
-```bash
-sudo apt-get update
+## Problem Statement
+Write a C/C++/Java program to draw the following pattern using:
+- (a) DDA line drawing algorithm for both rectangles with Dotted, Thick line style, and
+- (b) Bresenham's line drawing algorithm for a diamond shape with Dashed, Solid line style.
+
+> This program demonstrates a composite graphical pattern using various line styles, showing understanding of 2D graphics, algorithm efficiency, and creative design using code.
+
+## Source Code (`line.cpp`)
+
+```cpp
+#include<iostream>
+#include<graphics.h>
+#include<math.h>
+
+using namespace std;
+
+class Line {
+public:
+    int x1, x2, y1, y2;
+
+    void get() {
+        cout << "\n Enter the co-ordinate :";
+        cout << "\n\tEnter the x1 and y1 : ";
+        cin >> x1 >> y1;
+        cout << "\n\tEnter the x2 and y2 : ";
+        cin >> x2 >> y2;
+    }
+
+    void dda() {
+        int steps, i;
+        float xi, yi, x, y;
+        int dx, dy;
+        dx = x2 - x1;
+        dy = y2 - y1;
+        if (abs(dx) > abs(dy)) {
+            steps = abs(dx);
+        } else
+            steps = abs(dy);
+        xi = dx / (float) steps;
+        yi = dy / (float) steps;
+        x = x1;
+        y = y1;
+        putpixel(x, y, RED);
+        for (i = 0; i < steps; i++) {
+            x = x + xi;
+            y = y + yi;
+            delay(10);
+            putpixel(round(x), round(y), RED);
+        }
+    }
+
+    void bre() {
+        int dx, dy;
+        int p, xe, x, y;
+        dx = x2 - x1;
+        dy = y2 - y1;
+        p = 2 * dy - dx;
+        if (x1 > x2) {
+            x = x2;
+            y = y2;
+            xe = x1;
+        } else {
+            x = x1;
+            y = y1;
+            xe = x2;
+        }
+        putpixel(x, y, 7);
+        while (x < xe) {
+            // NOTE: the loop body was cut off in the source photos.
+            // Standard Bresenham line algorithm body used below —
+            // please verify against your original notes.
+            x++;
+            if (p < 0)
+                p = p + (2 * dy);
+            else {
+                y++;
+                p = p + 2 * (dy - dx);
+                delay(10);
+                putpixel(x, y, BLUE);
+            }
+        }
+    }
+};
+
+int main() {
+    Line l;
+    l.get();
+    int gd = DETECT, gm;
+    initgraph(&gd, &gm, NULL);
+    setbkcolor(YELLOW);
+    l.dda();
+    l.bre();
+    getch();
+    closegraph();
+}
 ```
-
-```bash
-sudo apt-get install libsdl-image1.2 libsdl-image1.2-dev guile-2.2 guile-2.2-dev
-```
-
-> **Note:** Ubuntu 22.04 ships with guile-3.0 by default. If `guile-2.2` and `guile-2.2-dev` are not found, check availability first with:
-> ```bash
-> apt-cache search guile-2.2
-> ```
-> If unavailable, you can substitute `guile-3.0` and `guile-3.0-dev` in this command and in the `pkg-config` flags below (replace `guile-2.2` with `guile-3.0`).
-
-```bash
-wget http://download.savannah.gnu.org/releases/libgraph/libgraph-1.0.2.tar.gz
-```
-
-```bash
-tar -xzvf libgraph-1.0.2.tar.gz
-```
-
-```bash
-cd libgraph-1.0.2
-```
-
-Run the following as a single copy-paste block (do not split into separate lines, and ensure there is no trailing whitespace after each `\`):
-
-```bash
-CPPFLAGS="$CPPFLAGS $(pkg-config --cflags-only-I guile-2.2) -fcommon" \
-CFLAGS="$CFLAGS $(pkg-config --cflags-only-other guile-2.2) -fcommon" \
-LDFLAGS="$LDFLAGS $(pkg-config --libs guile-2.2)" \
-./configure
-```
-
-```bash
-make && sudo make install
-```
-
-```bash
-sudo cp /usr/local/lib/libgraph.* /usr/lib
-```
-
-> **Note:** Confirm the files actually exist at `/usr/local/lib/libgraph.*` after `make install` before running this copy command. If nothing matches, check the `make install` output for the actual install path.
 
 ---
 
-## 2. Open the terminal and follow the next steps to write a program
+## Output
 
-**Write:**
+Save the code with `.cpp` extension, e.g. `line.cpp`
+
+To execute the code, use the following commands on the terminal:
+
 ```bash
-gedit cg1.cpp
+gedit line.cpp
 ```
 
-**Compile:**
 ```bash
-g++ -o cg1 cg1.cpp -lgraph
+g++ -o line line.cpp -lgraph
 ```
 
-**Execute:**
 ```bash
-./cg1
+./line
 ```
 
----
+**Sample Run:**
 
-## CG Program for Reference
+```
+Enter the co-ordinate:
+Enter the x1 and y1: 150 150
 
-[https://github.com/hash-bash/Computer-Graphics-Programs/tree/master/Libgraph](https://github.com/hash-bash/Computer-Graphics-Programs/tree/master/Libgraph)
+Enter the x2 and y2: 350 350
+```
+
+*(Screen will display the line output — paste that output/screenshot here)*
